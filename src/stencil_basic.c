@@ -103,7 +103,7 @@ static int stencil_test_convergence(void)
 int main(int argc, char**argv)
 {
   stencil_init();
-  stencil_display(current_buffer, 0, STENCIL_SIZE_X - 1, 0, STENCIL_SIZE_Y - 1);
+  //stencil_display(current_buffer, 0, STENCIL_SIZE_X - 1, 0, STENCIL_SIZE_Y - 1);                                                                                                                          
 
   struct timespec t1, t2;
   clock_gettime(CLOCK_MONOTONIC, &t1);
@@ -120,8 +120,13 @@ int main(int argc, char**argv)
   clock_gettime(CLOCK_MONOTONIC, &t2);
   const double t_usec = (t2.tv_sec - t1.tv_sec) * 1000000.0 + (t2.tv_nsec - t1.tv_nsec) / 1000.0;
   printf("# time = %g usecs.\n", t_usec);
-  stencil_display(current_buffer, 0, STENCIL_SIZE_X - 1, 0, STENCIL_SIZE_Y - 1);
+  //stencil_display(current_buffer, 0, STENCIL_SIZE_X - 1, 0, STENCIL_SIZE_Y - 1);                                                                                                                          
+
+  double GFLOPs = 5.0 * stencil_max_steps * STENCIL_SIZE_X * STENCIL_SIZE_Y / 1.0e9 / t_usec / 1.0e-6;
+
+  printf("GFLOPs=%f\n", GFLOPs);
+
+
 
   return 0;
 }
-
