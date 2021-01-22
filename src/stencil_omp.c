@@ -74,7 +74,7 @@ static void stencil_step(void) {
   int prev_buffer = current_buffer;
   int next_buffer = (current_buffer + 1) % STENCIL_NBUFFERS;
   int x, y;
-#pragma omp parallel for collapse(2) schedule(static)
+#pragma omp parallel for collapse(2) schedule(static) shared(values) first_private(prev_buffer, next_buffer)
   for(x = 1; x < STENCIL_SIZE_X - 1; x++) {
     for(y = 1; y < STENCIL_SIZE_Y - 1; y++) {
               values[next_buffer][x][y] =
