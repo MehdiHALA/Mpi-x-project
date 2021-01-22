@@ -6,11 +6,15 @@
 #include <mpi.h>
 #include <string.h>
 
-int STENCIL_SIZE_X = 64;
-int STENCIL_SIZE_Y = 64;
+#ifndef STENCIL_SIZE_X 
+#define STENCIL_SIZE_X 64
+#endif 
+#ifndef STENCIL_SIZE_Y
+#define STENCIL_SIZE_Y 64
+#endif
 
 /** number of buffers for N-buffering; should be at least 2 */
-int STENCIL_NBUFFERS = 2;
+#define STENCIL_NBUFFERS = 2;
 
 /** conduction coeff used in computation */
 const double alpha = 0.02;
