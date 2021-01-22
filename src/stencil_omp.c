@@ -13,7 +13,7 @@
 #endif
 
 /** number of buffers for N-buffering; should be at least 2 */
-int STENCIL_NBUFFERS = 2;
+#define STENCIL_NBUFFERS = 2;
 
 /** conduction coeff used in computation */
 static const double alpha = 0.02;
