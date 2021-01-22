@@ -5,8 +5,12 @@
 #include <stdbool.h>
 #include <omp.h>
 
-int STENCIL_SIZE_X = 25;
-int STENCIL_SIZE_Y = 30;
+#ifndef STENCIL_SIZE_X 
+#define STENCIL_SIZE_X 64
+#endif 
+#ifndef STENCIL_SIZE_Y
+#define STENCIL_SIZE_Y 64
+#endif
 
 /** number of buffers for N-buffering; should be at least 2 */
 int STENCIL_NBUFFERS = 2;
