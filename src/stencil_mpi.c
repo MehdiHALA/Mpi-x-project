@@ -121,12 +121,6 @@ static void stencil_step(void) {
 
   local_converged = 1;
 
-    #ifdef OPENMP_ENABLED
-#pragma omp parallel for private(y)
-    #endif
-    #ifdef OPENMP_COLLAPSE_ENABLED
-#pragma omp parallel for collapse(2)
-    #endif
   for(x = 0; x < block_height; x++) {
     for(y = 0; y < block_width; y++) {
       // Update cell                                                                                                                                                                                        
