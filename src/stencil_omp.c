@@ -89,13 +89,15 @@ static void stencil_step(void) {
 static int stencil_test_convergence(void) {
   int prev_buffer = (current_buffer - 1 + STENCIL_NBUFFERS) % STENCIL_NBUFFERS;
   int x, y;
+  int converged = true;
+#pragma omp parallel for collapse(2) private(x, y) firstprivate(prev_buffer, values) reduction(&& : converged)
   for(x = 1; x < STENCIL_SIZE_X - 1; x++) {
     for(y = 1; y < STENCIL_SIZE_Y - 1; y++) {
       if(fabs(values[prev_buffer][x][y] - values[current_buffer][x][y]) > epsilon)
-        return 0;
+        converged = false;
     }
   }
-  return 1;
+  return converged;
 }
 
 inline int max(int a, int b) {
