@@ -1,13 +1,14 @@
 ### Mpi-x-project
 TP de Programmation hybride MPI + X du module IT389
 
-##Compilation 
+## Compilation 
+
 ```sh
 make
 ```
 PS : J'ai encore un problème que je n'arrive pas à résoudre. Quand je push le Makefile, il détecte les tabs de celui-ci comme étant 8 espaces ainsi le Makefile ne fonctionne pas donc il faut refaire toutes les tabulations
 
-##Execution
+## Execution
 Pour la version basique et la version omp:
 ```sh
 ./build/stencil-%
@@ -17,7 +18,7 @@ Pour la version MPI et MPI+X:
 mpirun -np 4 ./build/stencil%
 ```
 
-##Script de génération 
+## Script de génération 
 ```sh
 ./scripts/generation.sh
 ```
