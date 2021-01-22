@@ -3,8 +3,12 @@
 #include <math.h>
 #include <time.h>
 
+#ifndef STENCIL_SIZE_X 
 #define STENCIL_SIZE_X 64
+#endif 
+#ifndef STENCIL_SIZE_Y
 #define STENCIL_SIZE_Y 64
+#endif
 
 /** number of buffers for N-buffering; should be at least 2 */
 #define STENCIL_NBUFFERS 2
