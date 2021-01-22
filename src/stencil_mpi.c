@@ -102,17 +102,6 @@ static void stencil_init() {
   }
 }
 
-/** display a (part of) the stencil values */
-static void stencil_display(int b, int x0, int x1, int y0, int y1) {
-  int x, y;
-  for(x = x0; x <= x1; x++) {
-    for(y = y0; y <= y1; y++) {
-      printf("%8.5g ", block[BLOCK_IDX(b,x,y)]);
-    }
-    printf("\n");
-  }
-}
-
 /** compute the next stencil step */
 static void stencil_step(void) {
   int prev_buffer = current_buffer;
@@ -171,7 +160,6 @@ int main(int argc, char**argv) {
   int pid;
   int np;
   int master = 0;
-  bool display_enabled = STENCIL_SIZE_X + STENCIL_SIZE_Y <= 20;
   struct timespec t1, t2;
 
   MPI_Comm_rank(MPI_COMM_WORLD, &pid);
@@ -187,7 +175,7 @@ int main(int argc, char**argv) {
   }
 
   // Create cartesian topology                                                                                                                                                                              
-  // Each processor is responsible for a block alsmost square                                                                                                                                               
+  // Each processor is responsible for a block almost square                                                                                                                                               
   dimensions[0] = 0; // sqrt(np);                                                                                                                                                                           
   dimensions[1] = 0;
   MPI_Dims_create(np, 2, dimensions);
@@ -219,32 +207,6 @@ int main(int argc, char**argv) {
 
   // Initialize stencil values                                                                                                                                                                              
   stencil_init();
-
-  if(display_enabled && pid == master) {
-    stencil_display(current_buffer, 0, block_height+1, 0, block_width+1);
-  }
-
-  // Print debugging information                                                                                                                                                                            
-    #ifdef DEBUG
-  if (pid == master) {
-    printf("grid_dimensions=%d %d\n", dimensions[0], dimensions[1]);
-    printf("block_width=%d\n", block_width);
-    printf("block_height=%d\n", block_height);
-  }
-  MPI_Barrier(grid);
-  printf("P%d(%d,%d)\n", grid_rank, coordinates[0], coordinates[1]);
-  MPI_Barrier(grid);
-  if (display_enabled) {
-    int proc;
-    for(proc=0;proc<np;proc++) {
-      if(pid == proc) {
-        printf("proc%d(%d,%d)\n", proc, coordinates[0], coordinates[1]);
-        stencil_display(current_buffer, 0, block_height+1, 0, block_width+1);
-      }
-      MPI_Barrier(grid);
-    }
-  }
-    #endif
 
   if (pid == master) {
     clock_gettime(CLOCK_MONOTONIC, &t1);
@@ -298,24 +260,7 @@ int main(int argc, char**argv) {
     double GFLOPs = 5.0 * stencil_max_steps * STENCIL_SIZE_X * STENCIL_SIZE_Y / 1.0e9 / t_usec / 1.0e-6;
 
     printf("GFLOPs=%f\n", GFLOPs);
-
-    if (display_enabled) {
-      stencil_display(current_buffer, 0, block_height+1, 0, block_width+1);
-    }
   }
-
-    #ifdef DEBUG
-  if (display_enabled) {
-    int p;
-    for(p=0;p<np;p++) {
-      if(pid == p) {
-        printf("proc%d(%d,%d)\n", p, coordinates[0], coordinates[1]);
-        stencil_display(current_buffer, 0, block_height+1, 0, block_width+1);
-      }
-      MPI_Barrier(grid);
-    }
-  }
-    #endif
 
   free(block);
 
