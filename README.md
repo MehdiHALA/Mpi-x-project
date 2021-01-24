@@ -1,6 +1,12 @@
 ### Mpi-x-project
 TP de Programmation hybride MPI + X du module IT389
 
+## Load Compilers
+
+```sh
+module load compiler/gcc/9.1.0 compiler/intel/2019_update4 mpi/openmpi/4.0.3
+```
+
 ## Compilation 
 
 ```sh
