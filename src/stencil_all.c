@@ -24,13 +24,13 @@ int stencil_max_steps = 10000;
 
 double * values = NULL;
 
-// Store block data for current process                                                                                                                                                                    \
-                                                                                                                                                                                                            
+// Store block data for current process
+
 double * block = NULL;
 
-// Store wheras a value is in border or not                                                                                                                                                                \
+// Store wheras a value is in border or not                                                                                                                                                                
                                                                                                                                                                                                             
-// So that it is not updated                                                                                                                                                                               \
+// So that it is not updated                                                                                                                                                                               
                                                                                                                                                                                                             
 char * block_border = NULL;
 
@@ -125,7 +125,7 @@ static void stencil_step(void) {
 #pragma omp parallel for private(x, y) collapse(2)
   for(x = 0; x < block_height; x++) {
     for(y = 0; y < block_width; y++) {
-      // Update cell                                                                                                                                                                                       \
+      // Update cell                                                                                                                                                                                     
                                                                                                                                                                                                             
       block[BLOCK_IDX(next_buffer,x+1,y+1)] =
         (alpha * block[BLOCK_IDX(prev_buffer,x ,y+1)] +
@@ -143,14 +143,14 @@ static void stencil_step(void) {
   int nb_requests = 0;
   MPI_Request requests[8];
 
-  // Send border data to neighbors                                                                                                                                                                         \
+  // Send border data to neighbors                                                                                                                                                                         
                                                                                                                                                                                                             
   MPI_Isend(&block[BLOCK_IDX(next_buffer, 1, 1)], 1, column, neighbors[LEFT], 0, grid, &requests[nb_requests++]);
   MPI_Isend(&block[BLOCK_IDX(next_buffer, 1, block_width)], 1, column, neighbors[RIGHT], 0, grid, &requests[nb_requests++]);
   MPI_Isend(&block[BLOCK_IDX(next_buffer, 1, 1)], 1, row, neighbors[UP], 0, grid, &requests[nb_requests++]);
   MPI_Isend(&block[BLOCK_IDX(next_buffer, block_height, 1)], 1, row, neighbors[DOWN], 0, grid, &requests[nb_requests++]);
 
-  // Receive border data from neighbors                                                                                                                                                                    \
+  // Receive border data from neighbors                                                                                                                                                                  
                                                                                                                                                                                                             
   MPI_Irecv(&block[BLOCK_IDX(next_buffer, 1, 0)], 1, column, neighbors[LEFT], 0, grid, &requests[nb_requests++]);
   MPI_Irecv(&block[BLOCK_IDX(next_buffer, 1, block_width+1)], 1, column, neighbors[RIGHT], 0, grid, &requests[nb_requests++]);
@@ -174,8 +174,6 @@ static int stencil_test_convergence(void) {
 int main(int argc, char**argv) {
   MPI_Init(&argc, &argv);
   int pid;
-MPI_Init(&argc, &argv);
-  int pid;
   int np;
   int master = 0;
   bool display_enabled = STENCIL_SIZE_X + STENCIL_SIZE_Y <= 20;
@@ -193,11 +191,11 @@ MPI_Init(&argc, &argv);
     stencil_max_steps = atoi(argv[3]);
   }
 
-  // Create cartesian topology                                                                                                                                                                             \
+  // Create cartesian topology                                                                                                                                                                             
                                                                                                                                                                                                             
-  // Each processor is responsible for a block almost square                                                                                                                                              \
+  // Each processor is responsible for a block almost square                                                                                                                                              
                                                                                                                                                                                                             
-  dimensions[0] = 0; // sqrt(np);                                                                                                                                                                          \
+  dimensions[0] = 0; // sqrt(np);                                                                                                                                                                          
                                                                                                                                                                                                             
   dimensions[1] = 0;
   MPI_Dims_create(np, 2, dimensions);
@@ -211,7 +209,7 @@ MPI_Init(&argc, &argv);
 
   MPI_Cart_coords(grid, grid_rank, 2, coordinates);
 
-  // Retrieve neighbors ranks                                                                                                                                                                              \
+  // Retrieve neighbors ranks                                                                                                                                                                             
                                                                                                                                                                                                             
   int source_rank;
   MPI_Cart_shift(grid, 0, 1, &source_rank, &neighbors[RIGHT]);
@@ -222,14 +220,14 @@ MPI_Init(&argc, &argv);
   block_height = STENCIL_SIZE_X / dimensions[0] + (STENCIL_SIZE_X % dimensions[0]);
   block_width = STENCIL_SIZE_Y / dimensions[1] + (STENCIL_SIZE_Y % dimensions[1]);
 
-  // Create column and row datatypes                                                                                                                                                                       \
+  // Create column and row datatypes                                                                                                                                                                     
                                                                                                                                                                                                             
   MPI_Type_contiguous(block_width, MPI_DOUBLE, &row);
   MPI_Type_vector(block_height, 1, block_width, MPI_DOUBLE, &column);
   MPI_Type_commit(&row);
   MPI_Type_commit(&column);
 
-  // Initialize stencil values                                                                                                                                                                             \
+  // Initialize stencil values                                                                                                                                                                           
                                                                                                                                                                                                             
   stencil_init();
 
@@ -243,7 +241,7 @@ stencil_display(current_buffer, 0, block_height+1, 0, block_width+1);
 
   int s;
   for(s = 0; s < stencil_max_steps; s++) {
-    // Update stencil values                                                                                                                                                                               \
+    // Update stencil values                                                                                                                                                                               
                                                                                                                                                                                                             
     stencil_step();
 
@@ -253,9 +251,9 @@ stencil_display(current_buffer, 0, block_height+1, 0, block_width+1);
     }
   }
 
-  //printf("%d\n", np);                                                                                                                                                                                    \
+  //printf("%d\n", np);                                                                                                                                                                                   
                                                                                                                                                                                                             
-  // Gather all block data into master process                                                                                                                                                             \
+  // Gather all block data into master process                                                                                                                                                             
                                                                                                                                                                                                             
 
   double * data = NULL;
@@ -264,10 +262,10 @@ stencil_display(current_buffer, 0, block_height+1, 0, block_width+1);
     data = malloc(sizeof(double) * (block_width+2) * (block_height+2) * np);
   }
 
-  //MPI_Gather(&block[BLOCK_IDX(current_buffer,0,0)], (block_width+2) * (block_height+2), MPI_DOUBLE, data, (block_width+2) * (block_height+2) * np, MPI_DOUBLE, master, grid);                            \
+  //MPI_Gather(&block[BLOCK_IDX(current_buffer,0,0)], (block_width+2) * (block_height+2), MPI_DOUBLE, data, (block_width+2) * (block_height+2) * np, MPI_DOUBLE, master, grid);                            
                                                                                                                                                                                                             
 
-  // Output results                                                                                                                                                                                        \
+  // Output results                                                                                                                                                                                       
                                                                                                                                                                                                             
   if (pid == master) {
     values = malloc(sizeof(double) * STENCIL_SIZE_X * STENCIL_SIZE_Y);
