@@ -4,10 +4,11 @@
 #include <time.h>
 #include <stdbool.h>
 #include <mpi.h>
+#include <omp.h>
 #include <string.h>
 
-int STENCIL_SIZE_X = 64;
-int STENCIL_SIZE_Y = 64;
+int STENCIL_SIZE_X = 32;
+int STENCIL_SIZE_Y = 32;
 
 
 /** number of buffers for N-buffering; should be at least 2 */
@@ -122,7 +123,7 @@ static void stencil_step(void) {
 
   local_converged = 1;
 
-#pragma omp parallel for private(x, y) collapse(2)
+#pragma omp parallel for private(x, y) collapse(2) reduction(&&: local_converged)
   for(x = 0; x < block_height; x++) {
     for(y = 0; y < block_width; y++) {
       // Update cell                                                                                                                                                                                     
