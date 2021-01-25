@@ -57,7 +57,7 @@ enum Neighbor {
   UP,
   DOWN,
   LEFT,
-    RIGHT
+  RIGHT
 };
 
 int local_converged;
@@ -105,16 +105,6 @@ static void stencil_init() {
   }
 }
 
-/** display a (part of) the stencil values */
-static void stencil_display(int b, int x0, int x1, int y0, int y1) {
-  int x, y;
-  for(x = x0; x <= x1; x++) {
-    for(y = y0; y <= y1; y++) {
-      printf("%8.5g ", block[BLOCK_IDX(b,x,y)]);
-    }
-    printf("\n");
-  }
-}
 /** compute the next stencil step */
 static void stencil_step(void) {
   int prev_buffer = current_buffer;
@@ -177,7 +167,6 @@ int main(int argc, char**argv) {
   int pid;
   int np;
   int master = 0;
-  bool display_enabled = STENCIL_SIZE_X + STENCIL_SIZE_Y <= 20;
   struct timespec t1, t2;
 
   MPI_Comm_rank(MPI_COMM_WORLD, &pid);
@@ -231,10 +220,6 @@ int main(int argc, char**argv) {
   // Initialize stencil values                                                                                                                                                                           
                                                                                                                                                                                                             
   stencil_init();
-
-  if(display_enabled && pid == master) {
-stencil_display(current_buffer, 0, block_height+1, 0, block_width+1);
-  }
 
   if (pid == master) {
     clock_gettime(CLOCK_MONOTONIC, &t1);
