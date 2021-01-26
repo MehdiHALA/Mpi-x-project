@@ -29,3 +29,6 @@ mpirun -np 4 ./build/stencil%
 ./scripts/generation.sh
 ```
 Il faudra changer le nom de l’éxecutable à l'intérieur du fichier bash si on souhaite tester un autre que la version basique.
+
+## Lien Github 
+https://github.com/MehdiHALA/Mpi-x-project
